@@ -42,33 +42,80 @@
                         @if (machines != null)
                         {
                             int counter = 1;
-                            foreach (var x in machines)
+                         
+
+                            @foreach (var x in machines)
                             {
                                 <tr>
                                     <td>@counter</td>
                                     <td>@x.Id</td>
                                     <td>@x.LatestDataSent.ToString("yyyy-MM-dd")</td>
                                     <td>@x.LatestDataSent.ToString("HH:mm:ss")</td>
-                                    <td>@x.Name</td>
-                                    <td>@x.Color</td>
-                                    <td>@x.Speed</td>
-                                    <td>@x.IsMachnieOnline</td>
                                     <td>
-                                        <button class="btn btn-info btn-sm" @onclick="() => StartEditing(x)">Edit</button>
-                                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteMachine(x.Id)">Delete</button>
+                                        @if (editingMachineId == x.Id)
+                                        {
+                                            <input type="text" class="form-control" @bind="x.Name" />
+                                        }
+                                        else
+                                        {
+                                            @x.Name
+                                        }
                                     </td>
-                                    @if (showEditForm && machineUnderEdit != null)
+                                    <td>
+                                        @if (editingMachineId == x.Id)
+                                        {
+                                            <input type="text" class="form-control" @bind="x.Color" />
+                                        }
+                                        else
+                                        {
+                                            @x.Color
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (editingMachineId == x.Id)
+                                        {
+                                            <input type="number" class="form-control" @bind="x.Speed" />
+                                        }
+                                        else
+                                        {
+                                            @x.Speed
+                                        }
+                                    </td>
+                                 <td>
+                                    @if (editingMachineId == x.Id)
                                     {
-                                        <InputText @bind-Value="machineUnderEdit.Name" />
-                                        <InputText @bind-Value="machineUnderEdit.Color" />
-                                        <InputNumber @bind-Value="machineUnderEdit.Speed" />
-
-
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="@($"checkbox-{x.Id}")" @bind="x.IsOnline" />
+                                            <label  for="@($"checkbox-{x.Id}")" class="form-check-label">Active</label>
+                                        </div>
                                     }
+                                    else
+                                    {
+                                        <span class="badge @(x.IsOnline ? "bg-success" : "bg-secondary")">@x.IsOnline</span>
+                                    }
+                                </td>
 
+
+
+                                    <td>
+                                        @if (editingMachineId == x.Id)
+                                        {
+                                            <button class="btn btn-success btn-sm" @onclick="() => SaveMachine(x)">Save</button>
+                                            <button class="btn btn-warning btn-sm" @onclick="() => CancelEdit()">Cancel</button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-info btn-sm" @onclick="() => EditMachine(x.Id)">Edit</button>
+                                            <button class="bt btn-danger btn-sm" @onclick="() => DeleteMachine(x.Id)">Delete</button>
+                                        }
+                                    </td>
                                 </tr>
                                 counter++;
                             }
+
+
+
+
                         }
                     </tbody>
                 </table>
@@ -101,24 +148,17 @@
 </div>
 
 @code {
-    // private Machine[]? machines;
-
-
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     machines = await MachineService.GetForecastAsync(DateTime.Now);
-    // }
-
+  
     private Machine[]? machines;
     private bool showAddForm = false;
-    private bool showEditForm = false;
+    private Guid? editingMachineId;
+
+   
     private string newMachineName = "";
     private string newMachineColor = "";
     private int newMachineSpeed = 0;
 
-    private Machine? machineUnderEdit; 
-    private Machine? originalMachine; 
-
+ 
 
     protected override async Task OnInitializedAsync()
     {
@@ -128,17 +168,7 @@
     private void ToggleAddFormVisibility()
     {
         showAddForm = !showAddForm;
-    }
-
-    private void ToggleEditFormVisibility()
-    {
-        showEditForm = !showEditForm;
-        if (showEditForm) showAddForm = false;
-    }
-
-
-
-    
+    }   
 
 
 
@@ -152,7 +182,7 @@
         Color = newMachineColor,
         Speed = newMachineSpeed,
         LatestDataSent = DateTime.Now,
-        IsMachnieOnline = true 
+        IsOnline = true 
     };
 
 
@@ -178,37 +208,26 @@
 
    
     
-    private void StartEditing(Machine machine)
+    private void EditMachine(Guid id)
     {
-        originalMachine = machine; 
-        machineUnderEdit = new Machine
-            {
-                Id = machine.Id,
-                Name = machine.Name,
-                Color = machine.Color,
-                Speed = machine.Speed,
-                LatestDataSent = machine.LatestDataSent,
-                IsMachnieOnline = machine.IsMachnieOnline
-            };
-        showEditForm = true;
-        showAddForm = false; 
+        editingMachineId = id;
     }
 
-    private async Task SaveChanges()
+    private async Task SaveMachine(Machine machine)
     {
-        if (machineUnderEdit != null)
-        {
-            await MachineService.UpdateMachineAsync(machineUnderEdit);
-            machines = await MachineService.GetMachinesAsync(); 
-            showEditForm = false;
-            machineUnderEdit = null; 
-        }
+        await MachineService.UpdateMachineAsync(machine); 
+        editingMachineId = null;
+        machines = await MachineService.GetMachinesAsync();
+        StateHasChanged();
     }
 
     private void CancelEdit()
     {
-        
+        editingMachineId = null;
+    
     }
+
+   
 
 
 

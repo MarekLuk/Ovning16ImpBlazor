@@ -1,51 +1,4 @@
-﻿//using Ovning16ImpBlazor.Data;
-
-//namespace Ovning16ImpBlazor.Data
-//{
-//    public class MachineService
-//    {
-//        private static readonly string[] ExamplesOfMachbnies = new[]
-//     {
-//            "Car", "Truck", "Motorbike", "Tanker", "Tractor", "Pickup", "Forklift", "Transporter", "Cementmixer", "Crane", "Excavator"
-//        };
-
-//        private static readonly string[] ColorOfMachine = new[]
-//    {
-//            "Red", "Green", "Blue", "Yellow", "Brown", "White"
-//        };
-
-//        private List<Machine> machines = new List<Machine>();
-
-
-//        public Task<Machine[]> GetMachinesAsync()
-//        {
-//            return Task.FromResult(machines.ToArray());
-//        }
-
-
-
-//        public Task<Machine[]> GetForecastAsync(DateTime startDate)
-//        {
-//            return Task.FromResult(Enumerable.Range(1, 5).Select(index => new Machine
-//            {
-//                Id = Guid.NewGuid(),
-//                LatestDataSent = startDate.AddDays(index),
-//                Speed = Random.Shared.Next(1, 99),
-//                Color = ColorOfMachine[Random.Shared.Next(ColorOfMachine.Length)],
-//                IsMachnieOnline = Random.Shared.NextDouble() >= 0.5,
-//                Name = ExamplesOfMachbnies[Random.Shared.Next(ExamplesOfMachbnies.Length)]
-//            }).ToArray());
-//        }
-
-
-
-
-//    }
-//}
-
-
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -95,7 +48,7 @@ namespace Ovning16ImpBlazor.Data
                 machine.Color = updatedMachine.Color;
                 machine.Speed = updatedMachine.Speed;
                 machine.LatestDataSent = updatedMachine.LatestDataSent;
-                machine.IsMachnieOnline = updatedMachine.IsMachnieOnline;
+                machine.IsOnline = updatedMachine.IsOnline;
             }
             return Task.CompletedTask;
         }
@@ -108,7 +61,7 @@ namespace Ovning16ImpBlazor.Data
                 LatestDataSent = startDate.AddDays(index),
                 Speed = Random.Shared.Next(1, 99),
                 Color = ColorOfMachine[Random.Shared.Next(ColorOfMachine.Length)],
-                IsMachnieOnline = Random.Shared.NextDouble() >= 0.5,
+                IsOnline = Random.Shared.NextDouble() >= 0.5,
                 Name = ExamplesOfMachines[Random.Shared.Next(ExamplesOfMachines.Length)]
             }).ToArray();
 

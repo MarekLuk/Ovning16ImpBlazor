@@ -9,7 +9,7 @@
         public string? Name { get; set; }
         public string? Color { get; set; }
         public int? Speed { get; set; }
-        public bool IsMachnieOnline { get; set; }
+        public bool IsOnline { get; set; }
 
         public DateTime LatestDataSent { get; set; }
        

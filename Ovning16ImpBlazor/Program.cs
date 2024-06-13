@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
-using Ovning16ImpBlazor.Data;
-
-var builder = WebApplication.CreateBuilder(args);
+using Ovning16ImpBlazor.Data;var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
