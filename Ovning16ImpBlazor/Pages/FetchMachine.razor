@@ -10,7 +10,11 @@
     <div class="row">
        
         <div class="col-md-3 px-1 border bg-light mx-2">
-            <h1>Daily Stats</h1>
+            <h1>Daily Stats</h1>            
+            <p>Total Machines: @NumbersMachines</p>
+            <p>Active machines: @ActiveMachines</p>
+            <p>Avarage spped of active machines: @AverageSpeedActive.ToString("F2") </p>
+       
            
         </div>
 
@@ -20,7 +24,7 @@
 
             @if (machines == null)
             {
-                <p><em>Loading...</em></p>
+                <p>Loading........................</p>
             }
             else
             {
@@ -148,15 +152,21 @@
 </div>
 
 @code {
-  
+
     private Machine[]? machines;
     private bool showAddForm = false;
-    private Guid? editingMachineId;
-
-   
+    private Guid? editingMachineId;   
     private string newMachineName = "";
     private string newMachineColor = "";
     private int newMachineSpeed = 0;
+
+
+    private int NumbersMachines => machines?.Length ?? 0;
+    private int ActiveMachines => machines?.Count(x => x.IsOnline) ?? 0;
+    private double AverageSpeedActive => machines?.Where(x => x.IsOnline).Average(x => x.Speed) ?? 0;
+
+
+
 
  
 
