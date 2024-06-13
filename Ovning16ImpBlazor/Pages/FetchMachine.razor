@@ -1,0 +1,215 @@
+﻿
+@page "/machine"
+
+<PageTitle>Weather forecast</PageTitle>
+
+@using Ovning16ImpBlazor.Data
+@inject MachineService MachineService
+
+<div class="container-fluid mt-3 mx-1">
+    <div class="row">
+       
+        <div class="col-md-3 px-1 border bg-light mx-2">
+            <h1>Daily Stats</h1>
+           
+        </div>
+
+        <div class="col-md-8 px-1 border bg-light mx-5">
+            <h1>Machine park</h1>
+            <p>List of devices</p>
+
+            @if (machines == null)
+            {
+                <p><em>Loading...</em></p>
+            }
+            else
+            {
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Id</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Name</th>
+                            <th>Color</th>
+                            <th>Speed</th>
+                            <th>Is machine active</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (machines != null)
+                        {
+                            int counter = 1;
+                            foreach (var x in machines)
+                            {
+                                <tr>
+                                    <td>@counter</td>
+                                    <td>@x.Id</td>
+                                    <td>@x.LatestDataSent.ToString("yyyy-MM-dd")</td>
+                                    <td>@x.LatestDataSent.ToString("HH:mm:ss")</td>
+                                    <td>@x.Name</td>
+                                    <td>@x.Color</td>
+                                    <td>@x.Speed</td>
+                                    <td>@x.IsMachnieOnline</td>
+                                    <td>
+                                        <button class="btn btn-info btn-sm" @onclick="() => StartEditing(x)">Edit</button>
+                                        <button class="btn btn-danger btn-sm" @onclick="() => DeleteMachine(x.Id)">Delete</button>
+                                    </td>
+                                    @if (showEditForm && machineUnderEdit != null)
+                                    {
+                                        <InputText @bind-Value="machineUnderEdit.Name" />
+                                        <InputText @bind-Value="machineUnderEdit.Color" />
+                                        <InputNumber @bind-Value="machineUnderEdit.Speed" />
+
+
+                                    }
+
+                                </tr>
+                                counter++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            }
+           
+
+            <button type="button" class="btn btn-primary mx-2 my-2" @onclick="ToggleAddFormVisibility">New machine</button>
+
+            @if (showAddForm)
+            {
+                <div class="mt-3">
+                    <div class="form-group">
+                        <label for="machineName">Name:</label>
+                        <input type="text" class="form-control" id="machineName" @bind="newMachineName" placeholder="Enter machine name">
+                    </div>
+                    <div class="form-group">
+                        <label for="machineColor">Color:</label>
+                        <input type="text" class="form-control" id="machineColor" @bind="newMachineColor" placeholder="Enter machine color">
+                    </div>
+                    <div class="form-group">
+                        <label for="machineSpeed">Speed:</label>
+                        <input type="number" class="form-control" id="machineSpeed" @bind="newMachineSpeed" placeholder="Enter machine speed">
+                    </div>
+                    <button class="btn btn-success" @onclick="AddMachine">Submit</button>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+@code {
+    // private Machine[]? machines;
+
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     machines = await MachineService.GetForecastAsync(DateTime.Now);
+    // }
+
+    private Machine[]? machines;
+    private bool showAddForm = false;
+    private bool showEditForm = false;
+    private string newMachineName = "";
+    private string newMachineColor = "";
+    private int newMachineSpeed = 0;
+
+    private Machine? machineUnderEdit; 
+    private Machine? originalMachine; 
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        machines = await MachineService.GetForecastAsync(DateTime.Now);
+    }
+
+    private void ToggleAddFormVisibility()
+    {
+        showAddForm = !showAddForm;
+    }
+
+    private void ToggleEditFormVisibility()
+    {
+        showEditForm = !showEditForm;
+        if (showEditForm) showAddForm = false;
+    }
+
+
+
+    
+
+
+
+
+    private async Task AddMachine()
+    {
+        var newMachine = new Machine
+    {
+        Id = Guid.NewGuid(),
+        Name = newMachineName,
+        Color = newMachineColor,
+        Speed = newMachineSpeed,
+        LatestDataSent = DateTime.Now,
+        IsMachnieOnline = true 
+    };
+
+
+        await MachineService.AddMachineAsync(newMachine);
+
+
+        newMachineName = "";
+        newMachineColor = "";
+        newMachineSpeed = 0;
+        showAddForm = false;
+
+        machines = await MachineService.GetMachinesAsync();
+    }
+
+  
+
+    private async Task DeleteMachine(Guid id)
+    {
+        await MachineService.DeleteMachineAsync(id);
+        machines = await MachineService.GetMachinesAsync();  
+        StateHasChanged();  
+    }
+
+   
+    
+    private void StartEditing(Machine machine)
+    {
+        originalMachine = machine; 
+        machineUnderEdit = new Machine
+            {
+                Id = machine.Id,
+                Name = machine.Name,
+                Color = machine.Color,
+                Speed = machine.Speed,
+                LatestDataSent = machine.LatestDataSent,
+                IsMachnieOnline = machine.IsMachnieOnline
+            };
+        showEditForm = true;
+        showAddForm = false; 
+    }
+
+    private async Task SaveChanges()
+    {
+        if (machineUnderEdit != null)
+        {
+            await MachineService.UpdateMachineAsync(machineUnderEdit);
+            machines = await MachineService.GetMachinesAsync(); 
+            showEditForm = false;
+            machineUnderEdit = null; 
+        }
+    }
+
+    private void CancelEdit()
+    {
+        
+    }
+
+
+
+}
