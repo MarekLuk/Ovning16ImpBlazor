@@ -172,7 +172,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        machines = await MachineService.GetForecastAsync(DateTime.Now);
+        machines = await MachineService.GetMachinesAsync();
     }
 
     private void ToggleAddFormVisibility()

@@ -2,71 +2,71 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace Ovning16ImpBlazor.Data
 {
     public class MachineService
     {
-        private static readonly string[] ExamplesOfMachines = new[]
-        {
-            "Car", "Truck", "Motorbike", "Tanker", "Tractor", "Pickup", "Forklift", "Transporter", "Cementmixer", "Crane", "Excavator"
-        };
+        //private static readonly string[] ExamplesOfMachines = new[]
+        //{
+        //    "Car", "Truck", "Motorbike", "Tanker", "Tractor", "Pickup", "Forklift", "Transporter", "Cementmixer", "Crane", "Excavator"
+        //};
 
-        private static readonly string[] ColorOfMachine = new[]
-        {
-            "Red", "Green", "Blue", "Yellow", "Brown", "White"
-        };
+        //private static readonly string[] ColorOfMachine = new[]
+        //{
+        //    "Red", "Green", "Blue", "Yellow", "Brown", "White"
+        //};
 
-        private List<Machine> machines = new List<Machine>();
+        //private List<Machine> machines = new List<Machine>();
 
-        public Task<Machine[]> GetMachinesAsync()
+        private readonly HttpClient _httpClient;
+
+        public MachineService(HttpClient httpClient)
         {
-            return Task.FromResult(machines.ToArray());
+            _httpClient = httpClient;
         }
 
-        public Task AddMachineAsync(Machine machine)
+
+
+        public async Task<Machine[]> GetMachinesAsync()
         {
-            machines.Add(machine);
-            return Task.CompletedTask;
-        }
-        public Task DeleteMachineAsync(Guid id)
-        {
-            var machine = machines.FirstOrDefault(m => m.Id == id);
-            if (machine != null)
+            try
             {
-                machines.Remove(machine);
+                return await _httpClient.GetFromJsonAsync<Machine[]>("api/machines");
             }
-            return Task.CompletedTask;
-        }
-
-        public Task UpdateMachineAsync(Machine updatedMachine)
-        {
-            var machine = machines.FirstOrDefault(m => m.Id == updatedMachine.Id);
-            if (machine != null)
+            catch
             {
-                machine.Name = updatedMachine.Name;
-                machine.Color = updatedMachine.Color;
-                machine.Speed = updatedMachine.Speed;
-                machine.LatestDataSent = updatedMachine.LatestDataSent;
-                machine.IsOnline = updatedMachine.IsOnline;
+                return Array.Empty<Machine>();
             }
-            return Task.CompletedTask;
         }
 
-        public Task<Machine[]> GetForecastAsync(DateTime startDate)
+        public async Task AddMachineAsync(Machine machine)
         {
-            var newMachines = Enumerable.Range(1, 5).Select(index => new Machine
-            {
-                Id = Guid.NewGuid(),
-                LatestDataSent = startDate.AddDays(index),
-                Speed = Random.Shared.Next(1, 99),
-                Color = ColorOfMachine[Random.Shared.Next(ColorOfMachine.Length)],
-                IsOnline = Random.Shared.NextDouble() >= 0.5,
-                Name = ExamplesOfMachines[Random.Shared.Next(ExamplesOfMachines.Length)]
-            }).ToArray();
-
-            machines.AddRange(newMachines);
-            return Task.FromResult(newMachines);
+            var response = await _httpClient.PostAsJsonAsync("api/machines", machine);
+            response.EnsureSuccessStatusCode();
         }
+
+
+
+        public async Task DeleteMachineAsync(Guid id)
+        {
+            var response = await _httpClient.DeleteAsync($"api/machines/{id}");
+            response.EnsureSuccessStatusCode();
+        }
+
+
+
+
+        public async Task UpdateMachineAsync(Machine updatedMachine)
+        {
+            var response = await _httpClient.PutAsJsonAsync($"api/machines/{updatedMachine.Id}", updatedMachine);
+            response.EnsureSuccessStatusCode();
+        }
+
+
+       
     }
 }

@@ -5,6 +5,8 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ovning16ImpBlazor", "Ovning16ImpBlazor\Ovning16ImpBlazor.csproj", "{DE4E9EF4-099B-401D-B1F3-29875E8E3E14}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ovning16ImpBlazor.Server", "Ovning16ImpBlazor.Server\Ovning16ImpBlazor.Server.csproj", "{C2099BB2-239D-4C3D-8EA3-3A6C2C0AD455}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{DE4E9EF4-099B-401D-B1F3-29875E8E3E14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE4E9EF4-099B-401D-B1F3-29875E8E3E14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE4E9EF4-099B-401D-B1F3-29875E8E3E14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2099BB2-239D-4C3D-8EA3-3A6C2C0AD455}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2099BB2-239D-4C3D-8EA3-3A6C2C0AD455}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2099BB2-239D-4C3D-8EA3-3A6C2C0AD455}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2099BB2-239D-4C3D-8EA3-3A6C2C0AD455}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

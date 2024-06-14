@@ -1,0 +1,6 @@
+@Ovning16ImpBlazor.Server_HostAddress = http://localhost:5101
+
+GET {{Ovning16ImpBlazor.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
